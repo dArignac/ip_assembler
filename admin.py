@@ -109,7 +109,15 @@ class IPAdmin(admin.ModelAdmin):
         return render(
             request,
             'admin/batch_process_ips.html',
-            {'form': form, 'info_text': info_text, 'ips': IP.objects.all().order_by('seg_0', 'seg_1', 'seg_2', 'seg_3')}
+            {
+                'form': form,
+                'info_text': info_text,
+                # PostgreSQL specific!
+                'ips': IP.objects.extra(
+                    select={'seg0': 'seg_0::int', 'seg1': 'seg_1::int', 'seg2': 'seg_2::int'},
+                    order_by=['seg0', 'seg1', 'seg2', 'seg_3']
+                )
+            }
         )
 
 admin.site.register(IP, IPAdmin)
