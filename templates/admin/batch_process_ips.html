@@ -1,0 +1,24 @@
+<!DOCTYPE html>{%  load i18n %}
+<html>
+<head>
+    <title>Batch process IPs</title>
+</head>
+<body>
+    <a href="{% url 'admin:ip_assembler_ip_changelist' %}" style="display: block; margin-bottom: 10px;">{% trans 'Back to overview' %}</a>
+    <br />
+    <div style="float: left; width: 300px;">
+        <em>{% autoescape off %}{{ info_text }}{% endautoescape %}</em>
+        <form action="{% url 'admin:batch_process_ips_view' %}" method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Submit" />
+        </form>
+    </div>
+    <div style="float: left; margin-left: 20px; width: 300px;">
+        {%  if ips|length > 0 %}
+            <textarea cols="20" rows="{{ ips|length }}">{% for ip in ips %}{{ ip }}
+{% endfor %}</textarea>
+        {% endif %}
+    </div>
+    <div style="clear: both;"></div>
+</body>
+</html>
