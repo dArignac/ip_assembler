@@ -6,7 +6,7 @@
 <body>
     <a href="{% url 'admin:ip_assembler_ip_changelist' %}" style="display: block; margin-bottom: 10px;">{% trans 'Back to overview' %}</a>
     <br />
-    <div style="float: left; width: 300px;">
+    <div style="float: left; margin-right: 60px; width: 300px;">
         <em>{% autoescape off %}{{ info_text }}{% endautoescape %}</em>
         <form action="{% url 'admin:batch_process_ips_view' %}" method="post">{% csrf_token %}
             {{ form.as_p }}
