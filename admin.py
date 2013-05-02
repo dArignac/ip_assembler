@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.conf.urls import patterns, url
-from django.contrib.localflavor import cl
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
