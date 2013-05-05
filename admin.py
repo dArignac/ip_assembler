@@ -10,18 +10,7 @@ from ip_assembler.models import IP
 
 
 class IPAdmin(admin.ModelAdmin):
-    actions = ['batch_process_ips', ]
     ordering = ['seg_0', 'seg_1', 'seg_2', 'seg_3', ]
-
-    # TODO: use a better way to get to the custom view
-    def batch_process_ips(self, request, queryset):
-        """
-        Batch process IPs action.
-        :param request: the request
-        :param queryset: the querystring matching the selected IPs
-        """
-        return HttpResponseRedirect(reverse('admin:batch_process_ips_view'))
-    batch_process_ips.short_description = _('Batch process IPs')
 
     def get_urls(self):
         """
