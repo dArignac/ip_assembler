@@ -1,7 +1,5 @@
-from django.contrib import admin
 from django.conf.urls import patterns, url
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.contrib import admin
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 
