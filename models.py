@@ -1,5 +1,12 @@
+from bootstrap import admin_actions_registry
+
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _, ugettext_lazy
+
+# admin action to be displayed in action row
+admin_actions_registry['ip_assembler'] = lambda: \
+    '<a href="%s" class="button">IP Batch Processing</a>' % reverse('admin:batch_process_ips_view')
 
 
 class IP(models.Model):
