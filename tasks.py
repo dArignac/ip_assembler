@@ -50,6 +50,7 @@ class IPEMailChecker(PeriodicTask):
                     ]
 
                 # iterate the mail indices and fetch the mails
+                ips_created = 0
                 for mail_index in mail_indices[0].split():
                     # mail data is a list with a tuple
                     sub_result, mail_data = box.fetch(mail_index, '(BODY[TEXT])')
@@ -62,11 +63,15 @@ class IPEMailChecker(PeriodicTask):
 
                         # if ips found, add them and delete the mail
                         if len(ips) > 0:
-                            IP.batch_add_ips(ips)
+                            ips_created += IP.batch_add_ips(ips)
                             box.store(mail_index, '+FLAGS', '\\Deleted')
 
                     else:
                         logger.error('fetching mail with index %(index)d failed' % {'index': mail_index})
+
+                # finally, if ips were added, unify the IPs
+                if ips_created > 0:
+                    IP.unify_ips()
 
             else:
                 logger.error('search returned not OK')
