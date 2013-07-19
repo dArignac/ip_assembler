@@ -38,8 +38,12 @@ class IPEMailChecker(PeriodicTask):
             # if everything was ok...
             if result == 'OK':
 
+                # check number of mails
+                mail_count = len(mail_indices[0].split())
+                logger.info('found %(mail_count)d mails...' % {'mail_count': mail_count})
+
                 # if there is mail, set the regex expressions
-                if len(mail_indices[0].split()) > 0:
+                if mail_count > 0:
                     self.regex_expressions = [
                         re.compile(".*ip_tracer/(.*)\).*", re.IGNORECASE | re.MULTILINE | re.UNICODE | re.VERBOSE),
                         re.compile(".*IP address (.*) has been.*")
