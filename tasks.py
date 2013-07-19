@@ -28,12 +28,12 @@ class IPEMailChecker(PeriodicTask):
         """
         try:
             # connect to server and login
-            mail = imaplib.IMAP4_SSL(settings.IMAP_SERVER)
-            mail.login(settings.IMAP_USERNAME, settings.IMAP_PASSWORD)
-            mail.select()
+            box = imaplib.IMAP4_SSL(settings.IMAP_SERVER)
+            box.login(settings.IMAP_USERNAME, settings.IMAP_PASSWORD)
+            box.select()
 
             # search for all mails in the mailbox
-            result, mail_indices = mail.search(None, 'ALL')
+            result, mail_indices = box.search(None, 'ALL')
 
             # if everything was ok...
             if result == 'OK':
@@ -48,7 +48,7 @@ class IPEMailChecker(PeriodicTask):
                 # iterate the mail indices and fetch the mails
                 for mail_index in mail_indices[0].split():
                     # mail data is a list with a tuple
-                    sub_result, mail_data = mail.fetch(mail_index, '(BODY[TEXT])')
+                    sub_result, mail_data = box.fetch(mail_index, '(BODY[TEXT])')
                     if sub_result == 'OK':
 
                         # fetch the ips
@@ -59,6 +59,7 @@ class IPEMailChecker(PeriodicTask):
                         # if ips found, add them and delete the mail
                         if len(ips) > 0:
                             IP.batch_add_ips(ips)
+                            box.store(mail_index, '+FLAGS', '\\Deleted')
 
                     else:
                         logger.error('fetching mail with index %(index)d failed' % {'index': mail_index})
@@ -66,8 +67,8 @@ class IPEMailChecker(PeriodicTask):
             else:
                 logger.error('search returned not OK')
 
-            mail.close()
-            mail.logout()
+            box.close()
+            box.logout()
         except:
             logger.exception('retrieving mail failed')
 
