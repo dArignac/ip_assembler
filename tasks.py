@@ -20,7 +20,7 @@ class IPEMailChecker(PeriodicTask):
     """
     Periodic task checking the mailbox for new mails about WP spamming..
     """
-    run_every = timedelta(minutes=30)
+    run_every = timedelta(minutes=120)
 
     def run(self, **kwargs):
         """
