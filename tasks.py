@@ -52,6 +52,7 @@ class IPEMailChecker(PeriodicTask):
                 # iterate the mail indices and fetch the mails
                 ips_created = 0
                 for mail_index in mail_indices[0].split():
+                    logger.info('fetching mail %(mail_index)d...' % {'mail_index': mail_index})
                     # mail data is a list with a tuple
                     sub_result, mail_data = box.fetch(mail_index, '(BODY[TEXT])')
                     if sub_result == 'OK':
