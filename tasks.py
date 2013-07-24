@@ -63,6 +63,7 @@ class IPEMailChecker(PeriodicTask):
 
                         # if ips found, add them and delete the mail
                         if len(ips) > 0:
+                            logger.info('found %(count)d IPs' % {'count': len(ips)})
                             ips_created += IP.batch_add_ips(ips)
                             box.store(mail_index, '+FLAGS', '\\Deleted')
 
@@ -71,6 +72,7 @@ class IPEMailChecker(PeriodicTask):
 
                 # finally, if ips were added, unify the IPs
                 if ips_created > 0:
+                    logger.info('created %(count)d IPs' % {'count': ips_created})
                     IP.unify_ips()
 
             else:
