@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
+from ip_assembler.models import IP
 from ip_assembler.tasks import IPEMailChecker
 
 
@@ -13,6 +14,10 @@ class Command(BaseCommand):
             'email_checker_task': {
                 'help': 'Runs the IPEMailChecker task.',
                 'method': self.email_checker_task,
+            },
+            'unify_ips': {
+                'help': 'Runs IP.unify_ips().',
+                'method': self.unify_ips,
             },
         }
 
@@ -31,3 +36,9 @@ class Command(BaseCommand):
         Executes the IPEMailChecker tasks (that is a periodic task!)
         """
         IPEMailChecker().delay()
+
+    def unify_ips(self):
+        """
+        Runs the IP unification.
+        """
+        IP.unify_ips()

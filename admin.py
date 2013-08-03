@@ -44,9 +44,9 @@ class IPAdmin(admin.ModelAdmin):
                 # unify them
                 clean_ips = form.cleaned_data['show_cleaned_list']
                 if clean_ips:
-                    merged_ip_count = IP.unify_ips()
+                    processed_ips_count = IP.unify_ips()
 
-                    info_text += ',<br /> ' + _('%(merged_ip_count)d IPs merged' % {'merged_ip_count': merged_ip_count})
+                    info_text += ',<br /> ' + _('%(processed_ips_count)d IPs processed' % {'processed_ips_count': processed_ips_count})
                     info_text += ',<br /> ' + _('%(ip_count_before)d IPs before' % {'ip_count_before': ip_count_before})
                     info_text += ',<br /> ' + _('%(ip_count_after)d IPs after' % {'ip_count_after': IP.objects.count()})
 

@@ -44,45 +44,38 @@ class IP(models.Model):
         :return: number of merged ips
         :rtype: int
         """
-        # TODO this needs performance improvement!
-        # store the ips that have already been processed
-        processed_ips = []
+        processed_ips = 0
+        ips = {}
 
-        # number of merged ips
-        merged_ip_count = 0
+        # query for the IPs, also includes the starred IPs
+        for ip in IP.objects.raw(
+            'select distinct a.id, a.seg_0, a.seg_1, a.seg_2 '
+            'from ip_assembler_ip a, ip_assembler_ip b '
+            'where a.seg_0 = b.seg_0 and a.seg_1 = b.seg_1 and a.seg_2 = b.seg_2 and a.seg_3 != b.seg_3 '
+            'order by a.seg_0, a.seg_1, a.seg_2',
+        ):
+            key = '%d.%d.%d' % (int(ip.seg_0), int(ip.seg_1), int(ip.seg_2))
+            if not key in ips:
+                ips[key] = []
+            ips[key].append(ip)
 
-        # iterate all ips, might take a while ;-)
-        for ip in IP.objects.all().order_by('seg_0', 'seg_1', 'seg_2', 'seg_3'):
-            # if the ip was processed, skip
-            if ip in processed_ips:
-                continue
+        for key, ip_list in ips.items():
+            # check if a starred ip is in list
+            starred_ip = None
+            for ip in ip_list:
+                if ip.seg_3 == '*':
+                    starred_ip = ip
 
-            # get all siblings of the ip
-            siblings = IP.objects.filter(seg_0=ip.seg_0, seg_1=ip.seg_1, seg_2=ip.seg_2, )\
-                .exclude(pk=ip.pk)\
-                .order_by('seg_0', 'seg_1', 'seg_2', 'seg_3')
+            if starred_ip is None:
+                IP.objects.create(seg_0=ip_list[0].seg_0, seg_1=ip_list[0].seg_1, seg_2=ip_list[0].seg_2, seg_3='*', )
 
-            # there are siblings, process...
-            if siblings.count() > 0:
-                # check if there is already a starred IP in siblings
-                try:
-                    starred_ip = siblings.get(seg_3='*')
-                except:
-                # no starred ip, create one
-                    if ip.seg_3 != '*':
-                        starred_ip = IP.objects.create(seg_0=ip.seg_0, seg_1=ip.seg_1, seg_2=ip.seg_2, seg_3='*', )
-                    else:
-                        starred_ip = ip
+            # delete the other ips
+            for ip in ip_list:
+                if ip != starred_ip:
+                    processed_ips += 1
+                    ip.delete()
 
-                # delete the others
-                for sib_ip in siblings.exclude(pk=starred_ip.pk):
-                    processed_ips.append(sib_ip)
-                    merged_ip_count += 1
-                    sib_ip.delete()
-
-            processed_ips.append(ip)
-
-        return merged_ip_count
+        return processed_ips
 
     def __unicode__(self):
         return u'%s.%s.%s.%s' % (self.seg_0, self.seg_1, self.seg_2, self.seg_3)
