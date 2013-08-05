@@ -9,6 +9,26 @@ admin_actions_registry['ip_assembler'] = lambda: \
     '<a href="%s" class="button">IP Batch Processing</a>' % reverse('admin:batch_process_ips_view')
 
 
+class LocationLocal(models.Model):
+    """
+    Location of a local .htaccess file.
+    """
+    path = models.CharField(max_length=1000)
+
+    def __unicode__(self):
+        """
+        Returns the name of the IP.
+        :return: the name
+        :rtype: unicode
+        """
+        return self.path
+
+    class Meta:
+        app_label = 'ip_assembler'
+        verbose_name = ugettext_lazy('LocationLocal')
+        verbose_name_plural = ugettext_lazy('LocationLocal')
+
+
 class IP(models.Model):
     seg_0 = models.CharField(max_length=3, verbose_name=_('Segment 1'))
     seg_1 = models.CharField(max_length=3, verbose_name=_('Segment 2'))
@@ -78,6 +98,11 @@ class IP(models.Model):
         return processed_ips
 
     def __unicode__(self):
+        """
+        Returns the name of the IP.
+        :return: the name
+        :rtype: unicode
+        """
         return u'%s.%s.%s.%s' % (self.seg_0, self.seg_1, self.seg_2, self.seg_3)
 
     class Meta:
