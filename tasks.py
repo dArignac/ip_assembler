@@ -2,9 +2,15 @@ import logging
 import imaplib
 import re
 
-from .models import IP
+from .models import (
+    IP,
+    LocationLocal
+)
 
-from celery.task import PeriodicTask
+from celery.task import (
+    PeriodicTask,
+    Task,
+)
 
 from datetime import timedelta
 
@@ -14,6 +20,18 @@ from shared.utils import list_remove_duplicates
 
 
 logger = logging.getLogger('ip_assembler')
+
+
+class UpdateHtaccessLocationsTask(Task):
+    """
+    Updates locations of .htaccess with new IPs.
+    """
+    def run(self, **kwargs):
+        for l in LocationLocal.objects.all():
+            f = open(l.path, 'w')
+            # TODO do magic
+            print f
+            f.close()
 
 
 class IPEMailChecker(PeriodicTask):
