@@ -1,3 +1,4 @@
+# coding=utf-8
 import logging
 import imaplib
 import re
@@ -27,10 +28,35 @@ class UpdateHtaccessLocationsTask(Task):
     Updates locations of .htaccess with new IPs.
     """
     def run(self, **kwargs):
+        pass
+
+    @staticmethod
+    def whatever():
+        r0 = 'SetEnvIF REMOTE_ADDR ".*" DenyAccess'
+        r1 = 'SetEnvIF X-FORWARDED-FOR ".*" DenyAccess'
+        r2 = 'SetEnvIF X-CLUSTER-CLIENT-IP ".*" DenyAccess'
+
         for l in LocationLocal.objects.all():
-            f = open(l.path, 'w')
-            # TODO do magic
-            print f
+            f = open(l.path, 'rw')
+            c = ''.join(f.readlines())
+
+            # list of all positions of occurences
+            occurences_r0 = [m.start(0) for m in re.finditer(r0, c)]
+            occurences_r2 = [m.start(0) for m in re.finditer(r2, c)]
+
+            # start index where the IPs are declared
+            start = occurences_r0[0]
+
+            # end index of IPs
+            # the occurences_r2[-1] returns only the index of the last occurence that has a dynamic length,
+            # so we search for it and append its ĺength to get the last character
+            end = occurences_r2[-1] + len(re.findall(r2, c)[-1])
+
+            print '>' * 100
+
+            print c[:start] + c[end:]
+            print '<' * 100
+
             f.close()
 
 

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 from ip_assembler.models import IP
-from ip_assembler.tasks import IPEMailChecker
+from ip_assembler.tasks import IPEMailChecker, UpdateHtaccessLocationsTask
 
 
 class Command(BaseCommand):
@@ -18,6 +18,10 @@ class Command(BaseCommand):
             'unify_ips': {
                 'help': 'Runs IP.unify_ips().',
                 'method': self.unify_ips,
+            },
+            'location_replacement': {
+                'help': 'UpdateHtaccessLocationsTask',
+                'method': self.location_replacement,
             },
         }
 
@@ -42,3 +46,6 @@ class Command(BaseCommand):
         Runs the IP unification.
         """
         IP.unify_ips()
+
+    def location_replacement(self):
+        UpdateHtaccessLocationsTask.whatever()
