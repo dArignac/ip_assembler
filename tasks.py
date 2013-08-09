@@ -28,6 +28,8 @@ class UpdateHtaccessLocationsTask(Task):
     Updates locations of .htaccess with new IPs.
     """
     def run(self, **kwargs):
+        logger.info('UpdateHtaccessLocationsTask was called')
+
         # the regex patterns
         pattern0 = 'SetEnvIF REMOTE_ADDR ".*" DenyAccess'
         pattern1 = 'SetEnvIF X-FORWARDED-FOR ".*" DenyAccess'
