@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 import imaplib
+import os
 import re
 
 from .models import (
@@ -35,10 +36,10 @@ class UpdateHtaccessLocationsTask(Task):
         pattern1 = 'SetEnvIF X-FORWARDED-FOR ".*" DenyAccess'
         pattern2 = 'SetEnvIF X-CLUSTER-CLIENT-IP ".*" DenyAccess'
 
-        for l in LocationLocal.objects.all():
-            logger.info('Updating .htaccess file: %(location)s' % {'location': l.path})
+        for location in LocationLocal.objects.all():
+            logger.info('Updating .htaccess file: %(location)s' % {'location': location.path})
 
-            f = open(l.path, 'r')
+            f = open(location.path, 'r')
             content_old = ''.join(f.readlines())
             f.close()
             logger.info('read content of length %(length)d' % {'length': len(content_old)})
@@ -79,7 +80,14 @@ class UpdateHtaccessLocationsTask(Task):
 
             # go to beginning of file and write
             logger.info('writing new content with length %(length)d' % {'length': len(content_new)})
-            f = open(l.path, 'w')
+
+            # try to chmod +w the file
+            try:
+                os.system('chmod +w %(path)s' % {'path': location.path})
+            except:
+                logger.exception('unable to chmod the file on path %(path)s' % {'path': location.path})
+
+            f = open(location.path, 'w')
             f.write(content_new)
             f.close()
             logger.info('done')
