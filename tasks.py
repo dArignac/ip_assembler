@@ -28,19 +28,18 @@ class UpdateHtaccessLocationsTask(Task):
     Updates locations of .htaccess with new IPs.
     """
     def run(self, **kwargs):
-        pass
-
-    @staticmethod
-    def whatever():
         # the regex patterns
         pattern0 = 'SetEnvIF REMOTE_ADDR ".*" DenyAccess'
         pattern1 = 'SetEnvIF X-FORWARDED-FOR ".*" DenyAccess'
         pattern2 = 'SetEnvIF X-CLUSTER-CLIENT-IP ".*" DenyAccess'
 
         for l in LocationLocal.objects.all():
+            logger.info('Updating .htaccess file: %(location)s' % {'location': l.path})
+
             f = open(l.path, 'r')
             content_old = ''.join(f.readlines())
             f.close()
+            logger.info('read content of length %(length)d' % {'length': len(content_old)})
 
             # list of all positions of occurences
             occurrences_r0 = [m.start(0) for m in re.finditer(pattern0, content_old)]
@@ -77,9 +76,11 @@ class UpdateHtaccessLocationsTask(Task):
             content_new += content_old[end:]
 
             # go to beginning of file and write
+            logger.info('writing new content with length %(length)d' % {'length': len(content_new)})
             f = open(l.path, 'w')
             f.write(content_new)
             f.close()
+            logger.info('done')
 
 
 class IPEMailChecker(PeriodicTask):

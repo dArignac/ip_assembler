@@ -48,4 +48,4 @@ class Command(BaseCommand):
         IP.unify_ips()
 
     def location_replacement(self):
-        UpdateHtaccessLocationsTask.whatever()
+        UpdateHtaccessLocationsTask.delay()
