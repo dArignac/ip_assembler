@@ -47,6 +47,9 @@ class UpdateHtaccessLocationsTask(Task):
                 logger.exception('unable to read from file %(path)s' % {'path': location.path})
                 return
 
+            # check if to write info markers
+            write_info_markers = 'AUTO UPDATE IPS' in content_old
+
             logger.info('read content of length %(length)d' % {'length': len(content_old)})
 
             # list of all positions of occurences
@@ -65,7 +68,8 @@ class UpdateHtaccessLocationsTask(Task):
             content_new = content_old[:start]
 
             # start writing new IPs
-            content_new += '\n# START AUTO UPDATE IPS\n'
+            if write_info_markers:
+                content_new += '\n# START AUTO UPDATE IPS\n'
 
             for ip in IP.objects.all().order_by('seg_0', 'seg_1', 'seg_2', 'seg_3'):
                 replacement = '^%(seg_0)s\.%(seg_1)s\.%(seg_2)s\.%(seg_3)s$' % {
@@ -78,7 +82,8 @@ class UpdateHtaccessLocationsTask(Task):
                 content_new += str(pattern1.replace('.*', replacement)) + '\n'
                 content_new += str(pattern2.replace('.*', replacement)) + '\n'
 
-            content_new += '\n# END AUTO UPDATE IPS\n'
+            if write_info_markers:
+                content_new += '\n# END AUTO UPDATE IPS\n'
 
             # contents after the IPs
             content_new += content_old[end:]
