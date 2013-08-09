@@ -28,7 +28,7 @@ class Command(BaseCommand):
         if len(args) == 0:
             raise CommandError(
                 'Please specify a subcommand to run. This can be:\n' + '\n'.join(
-                    ['\t%(key)s:\t%(help)s' % {'key': key, 'help': value['help']} for key, value in commands.items()]
+                    ['\t%(key)s\t%(help)s' % {'key': key, 'help': value['help']} for key, value in commands.items()]
                 )
             )
 
