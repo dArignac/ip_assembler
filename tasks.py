@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 import imaplib
+import os
 import re
 
 from .models import (
@@ -18,8 +19,6 @@ from datetime import timedelta
 from django.conf import settings
 
 from shared.utils import list_remove_duplicates
-
-from subprocess import call
 
 
 logger = logging.getLogger('ip_assembler')
@@ -89,7 +88,7 @@ class UpdateHtaccessLocationsTask(Task):
 
             # try to chmod +w the file
             try:
-                call('chmod +w %(path)s' % {'path': location.path})
+                os.system('chmod +w %(path)s' % {'path': location.path})
             except OSError:
                 logger.exception('unable to chmod the file on path %(path)s' % {'path': location.path})
 
@@ -104,7 +103,7 @@ class UpdateHtaccessLocationsTask(Task):
 
             # remove write permissions
             try:
-                call('chmod -w %(path)s' % {'path': location.path})
+                os.system('chmod -w %(path)s' % {'path': location.path})
             except OSError:
                 logger.exception('unable to chmod the file on path %(path)s' % {'path': location.path})
 
