@@ -1,7 +1,6 @@
 # coding=utf-8
 import logging
 import imaplib
-import os
 import re
 
 from .models import (
@@ -19,6 +18,8 @@ from datetime import timedelta
 from django.conf import settings
 
 from shared.utils import list_remove_duplicates
+
+from subprocess import call
 
 
 logger = logging.getLogger('ip_assembler')
@@ -39,9 +40,14 @@ class UpdateHtaccessLocationsTask(Task):
         for location in LocationLocal.objects.all():
             logger.info('Updating .htaccess file: %(location)s' % {'location': location.path})
 
-            f = open(location.path, 'r')
-            content_old = ''.join(f.readlines())
-            f.close()
+            try:
+                f = open(location.path, 'r')
+                content_old = ''.join(f.readlines())
+                f.close()
+            except IOError:
+                logger.exception('unable to read from file %(path)s' % {'path': location.path})
+                return
+
             logger.info('read content of length %(length)d' % {'length': len(content_old)})
 
             # list of all positions of occurences
@@ -83,13 +89,25 @@ class UpdateHtaccessLocationsTask(Task):
 
             # try to chmod +w the file
             try:
-                os.system('chmod +w %(path)s' % {'path': location.path})
-            except:
+                call('chmod +w %(path)s' % {'path': location.path})
+            except OSError:
                 logger.exception('unable to chmod the file on path %(path)s' % {'path': location.path})
 
-            f = open(location.path, 'w')
-            f.write(content_new)
-            f.close()
+            # write to the file
+            try:
+                f = open(location.path, 'w')
+                f.write(content_new)
+                f.close()
+            except IOError:
+                logger.exception('unable to write to file %(path)s' % {'path': location.path})
+                return
+
+            # remove write permissions
+            try:
+                call('chmod -w %(path)s' % {'path': location.path})
+            except OSError:
+                logger.exception('unable to chmod the file on path %(path)s' % {'path': location.path})
+
             logger.info('done')
 
 
