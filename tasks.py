@@ -32,31 +32,53 @@ class UpdateHtaccessLocationsTask(Task):
 
     @staticmethod
     def whatever():
-        r0 = 'SetEnvIF REMOTE_ADDR ".*" DenyAccess'
-        r1 = 'SetEnvIF X-FORWARDED-FOR ".*" DenyAccess'
-        r2 = 'SetEnvIF X-CLUSTER-CLIENT-IP ".*" DenyAccess'
+        # the regex patterns
+        pattern0 = 'SetEnvIF REMOTE_ADDR ".*" DenyAccess'
+        pattern1 = 'SetEnvIF X-FORWARDED-FOR ".*" DenyAccess'
+        pattern2 = 'SetEnvIF X-CLUSTER-CLIENT-IP ".*" DenyAccess'
 
         for l in LocationLocal.objects.all():
-            f = open(l.path, 'rw')
-            c = ''.join(f.readlines())
+            f = open(l.path, 'r')
+            content_old = ''.join(f.readlines())
+            f.close()
 
             # list of all positions of occurences
-            occurences_r0 = [m.start(0) for m in re.finditer(r0, c)]
-            occurences_r2 = [m.start(0) for m in re.finditer(r2, c)]
+            occurrences_r0 = [m.start(0) for m in re.finditer(pattern0, content_old)]
+            occurrences_r2 = [m.start(0) for m in re.finditer(pattern2, content_old)]
 
             # start index where the IPs are declared
-            start = occurences_r0[0]
+            start = occurrences_r0[0]
 
             # end index of IPs
-            # the occurences_r2[-1] returns only the index of the last occurence that has a dynamic length,
-            # so we search for it and append its ĺength to get the last character
-            end = occurences_r2[-1] + len(re.findall(r2, c)[-1])
+            # the occurrences_r2[-1] returns only the index of the last occurrence that has a dynamic length,
+            # so we search for it and append its length to get the last character
+            end = occurrences_r2[-1] + len(re.findall(pattern2, content_old)[-1])
 
-            print '>' * 100
+            # contents before the IPs
+            content_new = content_old[:start]
 
-            print c[:start] + c[end:]
-            print '<' * 100
+            # start writing new IPs
+            content_new += '\n# START AUTO UPDATE IPS'
 
+            for ip in IP.objects.all().order_by('seg_0', 'seg_1', 'seg_2', 'seg_3'):
+                replacement = '^%(seg_0)s\.%(seg_1)s\.%(seg_2)s\.%(seg_3)s$' % {
+                    'seg_0': ip.seg_0,
+                    'seg_1': ip.seg_1,
+                    'seg_2': ip.seg_2,
+                    'seg_3': ip.seg_3 if ip.seg_3 != '*' else '[0-9]+',
+                }
+                content_new += str(pattern0.replace('.*', replacement)) + '\n'
+                content_new += str(pattern1.replace('.*', replacement)) + '\n'
+                content_new += str(pattern2.replace('.*', replacement)) + '\n'
+
+            content_new += '# END AUTO UPDATE IPS\n'
+
+            # contents after the IPs
+            content_new += content_old[end:]
+
+            # go to beginning of file and write
+            f = open(l.path, 'w')
+            f.write(content_new)
             f.close()
 
 
