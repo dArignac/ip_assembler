@@ -86,6 +86,7 @@ class UpdateHtaccessLocationsTask(Task):
                 content_new += '\n# END AUTO UPDATE IPS\n'
 
             # contents after the IPs
+            content_new = content_new[-2:]  # cut the last newline
             content_new += content_old[end:]
 
             # go to beginning of file and write
