@@ -29,6 +29,10 @@ class UpdateHtaccessLocationsTask(Task):
     Updates locations of .htaccess with new IPs.
     """
     def run(self, **kwargs):
+        pass
+
+    @staticmethod
+    def whatever():
         logger.info('UpdateHtaccessLocationsTask was called')
 
         # the regex patterns
@@ -52,7 +56,7 @@ class UpdateHtaccessLocationsTask(Task):
 
             logger.info('read content of length %(length)d' % {'length': len(content_old)})
 
-            # list of all positions of occurences
+            # list of all positions of occurrences
             occurrences_r0 = [m.start(0) for m in re.finditer(pattern0, content_old)]
             occurrences_r2 = [m.start(0) for m in re.finditer(pattern2, content_old)]
 
@@ -86,7 +90,6 @@ class UpdateHtaccessLocationsTask(Task):
                 content_new += '\n# END AUTO UPDATE IPS\n'
 
             # contents after the IPs
-            content_new = content_new[-2:]  # cut the last newline
             content_new += content_old[end:]
 
             # go to beginning of file and write
