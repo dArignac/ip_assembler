@@ -29,10 +29,6 @@ class UpdateHtaccessLocationsTask(Task):
     Updates locations of .htaccess with new IPs.
     """
     def run(self, **kwargs):
-        pass
-
-    @staticmethod
-    def whatever():
         logger.info('UpdateHtaccessLocationsTask was called')
 
         # the regex patterns
