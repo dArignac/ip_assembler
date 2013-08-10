@@ -16,12 +16,22 @@ from celery.task import (
 
 from datetime import timedelta
 
-from django.conf import settings
+from . import app_settings as settings
 
 from shared.utils import list_remove_duplicates
 
 
 logger = logging.getLogger('ip_assembler')
+
+
+class UpdateLocationsIfNecessaryTask(PeriodicTask):
+    """
+    Tasks that checks if at least settings.IP_ASSEMBLER_IP_CHANGED_THRESHOLD IPs have changed since last run.
+    If so, it calls the UpdateHtaccessLocationsTask.
+    Last changed dates is written in settings.IP_ASSEMBLER_IP_CHANGED_FILE.
+    """
+    # TODO implement
+    pass
 
 
 class UpdateHtaccessLocationsTask(Task):
