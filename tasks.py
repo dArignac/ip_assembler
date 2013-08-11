@@ -30,8 +30,47 @@ class UpdateLocationsIfNecessaryTask(PeriodicTask):
     If so, it calls the UpdateHtaccessLocationsTask.
     Last changed dates is written in settings.IP_ASSEMBLER_IP_CHANGED_FILE.
     """
-    # TODO implement
-    pass
+    run_every = timedelta(minutes=60)
+
+    def run(self, **kwargs):
+        """
+        Does the magic!
+        """
+        logger.info('UpdateLocationsIfNecessaryTask was called')
+
+        # read last ip count
+        try:
+            with open(settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'r') as f:
+                content_list = f.readlines()
+                if len(content_list) == 0:
+                    ip_count_old = -1
+                else:
+                    ip_count_old = int(content_list[0])
+        except IOError:
+            ip_count_old = -1
+
+        logger.info('read IP count of %(count)d' % {'count': ip_count_old})
+
+        # if IPs have significantly changed, update the locations
+        ip_count_now = IP.objects.count()
+        if ip_count_now == -1 or ip_count_now + settings.IP_ASSEMBLER_IP_CHANGED_THRESHOLD >= ip_count_old:
+            logger.info('Checking IP counts, last: %(ip_count_old)d - now: %(ip_count_now)d' % {
+                'ip_count_old': ip_count_old,
+                'ip_count_now': ip_count_now
+            })
+
+            # call the updater task
+            UpdateHtaccessLocationsTask().delay()
+
+            # write the new count to the file
+            try:
+                open(settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'w').close()
+                with open(settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'w') as f:
+                    f.write(str(ip_count_now))
+            except IOError:
+                logger.exception('unable to write to file %(file_path)s' % {'file_path': settings.IP_ASSEMBLER_IP_CHANGED_FILE})
+        else:
+            logger.info('nothing to do here')
 
 
 class UpdateHtaccessLocationsTask(Task):

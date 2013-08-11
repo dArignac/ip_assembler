@@ -1,7 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 
 from ip_assembler.models import IP
-from ip_assembler.tasks import IPEMailChecker, UpdateHtaccessLocationsTask
+from ip_assembler.tasks import (
+    IPEMailChecker,
+    UpdateHtaccessLocationsTask,
+    UpdateLocationsIfNecessaryTask,
+)
 
 
 class Command(BaseCommand):
@@ -23,6 +27,10 @@ class Command(BaseCommand):
                 'help': 'UpdateHtaccessLocationsTask',
                 'method': self.location_replacement,
             },
+            'update_locations': {
+                'help': 'UpdateLocationsIfNecessaryTask',
+                'method': self.update_locations,
+            }
         }
 
         if len(args) == 0:
@@ -49,3 +57,6 @@ class Command(BaseCommand):
 
     def location_replacement(self):
         UpdateHtaccessLocationsTask.delay()
+
+    def update_locations(self):
+        UpdateLocationsIfNecessaryTask.delay()
