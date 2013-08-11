@@ -53,7 +53,7 @@ class UpdateLocationsIfNecessaryTask(PeriodicTask):
 
         # if IPs have significantly changed, update the locations
         ip_count_now = IP.objects.count()
-        if ip_count_now == -1 or ip_count_now + settings.IP_ASSEMBLER_IP_CHANGED_THRESHOLD > ip_count_old:
+        if ip_count_now == -1 or ip_count_now > ip_count_old + settings.IP_ASSEMBLER_IP_CHANGED_THRESHOLD:
             logger.info('Checking IP counts, last: %(ip_count_old)d - now: %(ip_count_now)d' % {
                 'ip_count_old': ip_count_old,
                 'ip_count_now': ip_count_now
