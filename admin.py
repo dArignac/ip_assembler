@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 from ip_assembler.forms import IPBatchMergeForm
 from ip_assembler.models import (
     IP,
+    LocationFTP,
     LocationLocal
 )
 
@@ -72,3 +73,4 @@ class IPAdmin(admin.ModelAdmin):
 
 admin.site.register(IP, IPAdmin)
 admin.site.register(LocationLocal)
+admin.site.register(LocationFTP)
