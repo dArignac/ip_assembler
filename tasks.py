@@ -4,6 +4,8 @@ import imaplib
 import os
 import re
 
+from . import app_settings
+
 from .models import (
     IP,
     LocationLocal
@@ -16,7 +18,7 @@ from celery.task import (
 
 from datetime import timedelta
 
-from . import app_settings as settings
+from django.conf import settings
 
 from shared.utils import list_remove_duplicates
 
@@ -40,7 +42,7 @@ class UpdateLocationsIfNecessaryTask(PeriodicTask):
 
         # read last ip count
         try:
-            with open(settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'r') as f:
+            with open(app_settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'r') as f:
                 content_list = f.readlines()
                 if len(content_list) == 0:
                     ip_count_old = -1
@@ -53,7 +55,7 @@ class UpdateLocationsIfNecessaryTask(PeriodicTask):
 
         # if IPs have significantly changed, update the locations
         ip_count_now = IP.objects.count()
-        if ip_count_now == -1 or ip_count_now > ip_count_old + settings.IP_ASSEMBLER_IP_CHANGED_THRESHOLD:
+        if ip_count_now == -1 or ip_count_now > ip_count_old + app_settings.IP_ASSEMBLER_IP_CHANGED_THRESHOLD:
             logger.info('Checking IP counts, last: %(ip_count_old)d - now: %(ip_count_now)d' % {
                 'ip_count_old': ip_count_old,
                 'ip_count_now': ip_count_now
@@ -64,11 +66,11 @@ class UpdateLocationsIfNecessaryTask(PeriodicTask):
 
             # write the new count to the file
             try:
-                open(settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'w').close()
-                with open(settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'w') as f:
+                open(app_settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'w').close()
+                with open(app_settings.IP_ASSEMBLER_IP_CHANGED_FILE, 'w') as f:
                     f.write(str(ip_count_now))
             except IOError:
-                logger.exception('unable to write to file %(file_path)s' % {'file_path': settings.IP_ASSEMBLER_IP_CHANGED_FILE})
+                logger.exception('unable to write to file %(file_path)s' % {'file_path': app_settings.IP_ASSEMBLER_IP_CHANGED_FILE})
         else:
             logger.info('nothing to do here')
 
