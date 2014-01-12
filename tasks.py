@@ -172,6 +172,17 @@ class IPEMailChecker(PeriodicTask):
     """
     run_every = timedelta(minutes=120)
 
+    def __init__(self):
+        """
+        Init method setting the regular expressions.
+        """
+        self.regex_expressions = [
+            re.compile(".*ip_tracer/(.*)\).*", re.IGNORECASE | re.MULTILINE | re.UNICODE | re.VERBOSE),
+            re.compile(".*IP address (.*) has been.*"),
+            re.compile(".*Ein Host, (.*)\(.*")
+        ]
+        super(IPEMailChecker, self).__init__()
+
     def run(self, **kwargs):
         """
         Checks the IMAP mailbox for new mails and tries to handle them.
@@ -191,13 +202,6 @@ class IPEMailChecker(PeriodicTask):
                 # check number of mails
                 mail_count = len(mail_indices[0].split())
                 logger.info('found %(mail_count)d mails...' % {'mail_count': mail_count})
-
-                # if there is mail, set the regex expressions
-                if mail_count > 0:
-                    self.regex_expressions = [
-                        re.compile(".*ip_tracer/(.*)\).*", re.IGNORECASE | re.MULTILINE | re.UNICODE | re.VERBOSE),
-                        re.compile(".*IP address (.*) has been.*")
-                    ]
 
                 # iterate the mail indices and fetch the mails
                 ips_created = 0
