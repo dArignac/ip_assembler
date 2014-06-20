@@ -43,24 +43,20 @@ class Command(BaseCommand):
         # run the appropriate subcommand
         commands[args[0]]['method']()
 
-    @staticmethod
-    def email_checker_task():
+    def email_checker_task(self):
         """
         Executes the IPEMailChecker tasks (that is a periodic task!)
         """
         IPEMailChecker().delay()
 
-    @staticmethod
-    def unify_ips():
+    def unify_ips(self):
         """
         Runs the IP unification.
         """
         IP.unify_ips()
 
-    @staticmethod
-    def location_replacement():
+    def location_replacement(self):
         UpdateHtaccessLocationsTask.delay()
 
-    @staticmethod
     def update_locations(self):
         UpdateLocationsIfNecessaryTask.delay()
