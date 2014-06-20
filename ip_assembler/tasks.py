@@ -107,13 +107,17 @@ class UpdateHtaccessLocationsTask(Task):
             occurrences_r0 = [m.start(0) for m in re.finditer(pattern0, content_old)]
             occurrences_r2 = [m.start(0) for m in re.finditer(pattern2, content_old)]
 
-            # start index where the IPs are declared
-            start = occurrences_r0[0]
+            if len(occurrences_r0) == 0 or len(occurrences_r2) == 0:
+                start = 0
+                end = 0
+            else:
+                # start index where the IPs are declared
+                start = occurrences_r0[0]
 
-            # end index of IPs
-            # the occurrences_r2[-1] returns only the index of the last occurrence that has a dynamic length,
-            # so we search for it and append its length to get the last character
-            end = occurrences_r2[-1] + len(re.findall(pattern2, content_old)[-1])
+                # end index of IPs
+                # the occurrences_r2[-1] returns only the index of the last occurrence that has a dynamic length,
+                # so we search for it and append its length to get the last character
+                end = occurrences_r2[-1] + len(re.findall(pattern2, content_old)[-1]) + 1
 
             # contents before the IPs
             content_new = content_old[:start]
