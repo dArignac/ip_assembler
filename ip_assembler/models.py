@@ -1,15 +1,15 @@
-from bootstrap import admin_actions_registry
+# TODO still necessary?
+# from bootstrap import admin_actions_registry
 
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _, ugettext_lazy
 
-from django_fields import fields
 
-
-# admin action to be displayed in action row
-admin_actions_registry['ip_assembler'] = lambda: \
-    '<a href="%s" class="button">IP Batch Processing</a>' % reverse('admin:batch_process_ips_view')
+# TODO still necessary?
+# # admin action to be displayed in action row
+# from django.core.urlresolvers import reverse
+# admin_actions_registry['ip_assembler'] = lambda: \
+#     '<a href="%s" class="button">IP Batch Processing</a>' % reverse('admin:batch_process_ips_view')
 
 
 class LocationLocal(models.Model):
@@ -32,27 +32,28 @@ class LocationLocal(models.Model):
         verbose_name_plural = ugettext_lazy('Local locations')
 
 
-class LocationFTP(models.Model):
-    """
-    Location of an external, via FTP reachable, .htaccess file.
-    """
-    host = models.CharField(max_length=255, verbose_name=_('Host'))
-    username = models.CharField(max_length=255, verbose_name=_('Username'))
-    password = fields.EncryptedCharField(cipher='AES', block_type='MODE_CBC', verbose_name=_('Password'))
-    path = models.CharField(max_length=1000)
-
-    def __unicode__(self):
-        """
-        Returns the name of the IP.
-        :return: the name
-        :rtype: unicode
-        """
-        return u'%(host)s:%(path)s' % {'host': self.host, 'path': self.path}
-
-    class Meta:
-        app_label = 'ip_assembler'
-        verbose_name = ugettext_lazy('FTP location')
-        verbose_name_plural = ugettext_lazy('FTP locations')
+# TODO django_fields does not work with Python 3
+# class LocationFTP(models.Model):
+#     """
+#     Location of an external, via FTP reachable, .htaccess file.
+#     """
+#     host = models.CharField(max_length=255, verbose_name=_('Host'))
+#     username = models.CharField(max_length=255, verbose_name=_('Username'))
+#     password = fields.EncryptedCharField(cipher='AES', block_type='MODE_CBC', verbose_name=_('Password'))
+#     path = models.CharField(max_length=1000)
+#
+#     def __unicode__(self):
+#         """
+#         Returns the name of the IP.
+#         :return: the name
+#         :rtype: unicode
+#         """
+#         return u'%(host)s:%(path)s' % {'host': self.host, 'path': self.path}
+#
+#     class Meta:
+#         app_label = 'ip_assembler'
+#         verbose_name = ugettext_lazy('FTP location')
+#         verbose_name_plural = ugettext_lazy('FTP locations')
 
 
 class IP(models.Model):
