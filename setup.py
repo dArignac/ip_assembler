@@ -14,6 +14,7 @@ setup(
     # long_description=open('README.md').read(),
     install_requires=[
         'Django>=1.6,<1.7',
+        'django-shared',
     ],
     dependency_links=[
     ],
