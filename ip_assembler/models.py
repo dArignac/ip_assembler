@@ -18,7 +18,7 @@ class LocationLocal(models.Model):
     """
     path = models.CharField(max_length=1000)
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Returns the name of the IP.
         :return: the name
@@ -124,7 +124,7 @@ class IP(models.Model):
 
         return processed_ips
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Returns the name of the IP.
         :return: the name
