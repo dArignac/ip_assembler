@@ -16,5 +16,15 @@ setup(
         'Django>=1.6,<1.7',
     ],
     dependency_links=[
+    ],
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Framework :: Django',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 3.4',
+        'Topic :: Utilities',
     ]
 )
