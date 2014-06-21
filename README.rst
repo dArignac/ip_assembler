@@ -8,6 +8,12 @@ This is a project that gathers together all IPs that are being reported as banne
 
 The IPs are taken from a mailbox where the plugins send their mails to. The mails are parsed, the IP(s) extracted and added to the database.
 
+Necessary settings are:
+
+- ``IMAP_SERVER``
+- ``IMAP_USERNAME``
+- ``IMAP_PASSWORD``
+
 There is a "unification" of the IPs, that means the following IPs
 
 * 10.10.10.10
