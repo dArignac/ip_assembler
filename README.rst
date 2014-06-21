@@ -3,7 +3,8 @@ ip_assembler
 
 This is a project that gathers together all IPs that are being reported as banned by the Wordpress plugins
 
-* TODO <add the plugins here>
+* Better WP Security (now iThemes Security and not working any more)
+* Login Security Solution
 
 The IPs are taken from a mailbox where the plugins send their mails to. The mails are parsed, the IP(s) extracted and added to the database.
 
