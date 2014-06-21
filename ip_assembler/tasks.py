@@ -200,14 +200,14 @@ class IPEMailChecker(PeriodicTask):
                 # iterate the mail indices and fetch the mails
                 ips_created = 0
                 for mail_index in mail_indices[0].split():
-                    logger.info('fetching mail %(mail_index)s...' % {'mail_index': mail_index})
+                    logger.info('fetching mail %(mail_index)s...' % {'mail_index': int(mail_index)})
                     # mail data is a list with a tuple
                     sub_result, mail_data = box.fetch(mail_index, '(BODY[TEXT])')
                     if sub_result == 'OK':
 
                         # fetch the ips
                         ips = list_remove_duplicates(
-                            self.find_ips(''.join(mail_data[0]))
+                            self.find_ips(''.join([str(data) for data in mail_data[0]]))
                         )
 
                         # if ips found, add them and delete the mail
