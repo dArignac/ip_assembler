@@ -31,11 +31,7 @@ class IPAdmin(admin.ModelAdmin):
         if request.method == 'POST':
             form = IPBatchMergeForm(request.POST)
             if form.is_valid():
-
-                def filter_ips(ip):
-                    return len(ip) > 0
-
-                ips = filter(filter_ips, form.cleaned_data['ips'].split('\r\n'))
+                ips = list(filter(lambda x: len(x) > 0, form.cleaned_data['ips'].split('\r\n')))
                 ip_count_before = IP.objects.count()
 
                 if len(ips) > 0:
