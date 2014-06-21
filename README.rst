@@ -33,3 +33,5 @@ For each IP, the following will be added
 The place where this will be put is determined by checking if "SetEnvIF REMOTE_ADDR ..." already is there. If so, this is the start position.
 The last "SetEnvIF X-CLUSTER-CLIENT-IP" is the end position. Everything in between will be updated with the IPs from the database. If the .htaccess does not
 contain these entries, than the content will be written to the beginning of the file.
+
+There is an additional view in the admin site of the IP model with which you can batch add IPs. It's linked near the "Add IP" button.
