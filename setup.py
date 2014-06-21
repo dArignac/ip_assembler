@@ -10,7 +10,11 @@ setup(
     author_email='darignac@gmail.com',
     license='MIT',
     url='https://github.com/dArignac/ip_assembler',
-    packages=['ip_assembler'],
+    packages=[
+        'ip_assembler',
+        'ip_assembler.management.commands',
+        'ip_assembler.migrations',
+    ],
     long_description=open('README.rst').read(),
     install_requires=[
         'Django>=1.6,<1.7',
