@@ -41,3 +41,6 @@ The last ``SetEnvIF X-CLUSTER-CLIENT-IP`` is the end position. Everything in bet
 contain these entries, than the content will be written to the beginning of the file.
 
 There is an additional view in the admin site of the IP model with which you can batch add IPs. It's linked near the "Add IP" button.
+
+
+Find the package on PyPI: https://pypi.python.org/pypi/ip_assembler
